@@ -41,6 +41,7 @@ class CAR:
   IMPREZA_2020 = "SUBARU IMPREZA SPORT 2020"
   FORESTER = "SUBARU FORESTER 2019"
   OUTBACK = "SUBARU OUTBACK 6TH GEN"
+  OUTBACK_2023 = "SUBARU OUTBACK 7TH GEN"
   LEGACY = "SUBARU LEGACY 7TH GEN"
 
   # Pre-global
@@ -59,6 +60,7 @@ class SubaruCarInfo(CarInfo):
 CAR_INFO: Dict[str, Union[SubaruCarInfo, List[SubaruCarInfo]]] = {
   CAR.ASCENT: SubaruCarInfo("Subaru Ascent 2019-21", "All"),
   CAR.OUTBACK: SubaruCarInfo("Subaru Outback 2020-22", "All", harness=Harness.subaru_b),
+  CAR.OUTBACK_2023: SubaruCarInfo("Subaru Outback 2023", "All", harness=Harness.subaru_d),
   CAR.LEGACY: SubaruCarInfo("Subaru Legacy 2020-22", "All", harness=Harness.subaru_b),
   CAR.IMPREZA: [
     SubaruCarInfo("Subaru Impreza 2017-19"),
@@ -84,6 +86,14 @@ SUBARU_VERSION_RESPONSE = bytes([uds.SERVICE_TYPE.READ_DATA_BY_IDENTIFIER + 0x40
 
 FW_QUERY_CONFIG = FwQueryConfig(
   requests=[
+    Request(
+      [SUBARU_VERSION_REQUEST],
+      [SUBARU_VERSION_RESPONSE],
+    ),
+    Request(
+      [StdQueries.TESTER_PRESENT_REQUEST, SUBARU_VERSION_REQUEST],
+      [StdQueries.TESTER_PRESENT_RESPONSE, SUBARU_VERSION_RESPONSE],
+    ),
     Request(
       [StdQueries.TESTER_PRESENT_REQUEST, SUBARU_VERSION_REQUEST],
       [StdQueries.TESTER_PRESENT_RESPONSE, SUBARU_VERSION_RESPONSE],
@@ -521,6 +531,23 @@ FW_VERSIONS = {
       b'\xa7\xfe\xf4@\x00',
     ],
   },
+  CAR.OUTBACK_2023: {
+    (Ecu.esp, 0x7b0, None): [
+      b'\xf1\x00\xbb\r\x07',
+    ],
+    (Ecu.eps, 0x746, None): [
+      b'+\xc0\x10\x11\x00',
+    ],
+    (Ecu.fwdCamera, 0x787, None): [
+      b'\xf1\x00 \x02\x0e',
+    ],
+    (Ecu.engine, 0x7a2, None): [
+      b'\xed"`@\x07',
+    ],
+    (Ecu.transmission, 0x7a3, None): [
+      b'\xa8\xf6D0\x00',
+    ],
+  },
 }
 
 DBC = {
@@ -529,6 +556,7 @@ DBC = {
   CAR.IMPREZA_2020: dbc_dict('subaru_global_2017_generated', None),
   CAR.FORESTER: dbc_dict('subaru_global_2017_generated', None),
   CAR.OUTBACK: dbc_dict('subaru_global_2017_generated', None),
+  CAR.OUTBACK_2023: dbc_dict('subaru_global_2017_generated', None),
   CAR.LEGACY: dbc_dict('subaru_global_2017_generated', None),
   CAR.FORESTER_PREGLOBAL: dbc_dict('subaru_forester_2017_generated', None),
   CAR.LEGACY_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
@@ -536,5 +564,5 @@ DBC = {
   CAR.OUTBACK_PREGLOBAL_2018: dbc_dict('subaru_outback_2019_generated', None),
 }
 
-GLOBAL_GEN2 = (CAR.OUTBACK, CAR.LEGACY)
+GLOBAL_GEN2 = (CAR.OUTBACK, CAR.LEGACY, CAR.OUTBACK_2023)
 PREGLOBAL_CARS = (CAR.FORESTER_PREGLOBAL, CAR.LEGACY_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018)
