@@ -1,10 +1,11 @@
 [submodule "panda"]
   path = panda
   url = ../../martinl/panda.git
-  branch = legacypilot-outback2023
+  branch = legacypilot-outback-2023
 [submodule "opendbc"]
   path = opendbc
-  url = ../../commaai/opendbc.git
+  url = ../../martinl/opendbc.git
+  branch = legacypilot
 [submodule "laika_repo"]
   path = laika_repo
   url = ../../commaai/laika.git
